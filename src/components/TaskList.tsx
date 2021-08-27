@@ -1,4 +1,6 @@
 import { useState } from 'react'
+//import { uid } from '';
+
 
 import '../styles/tasklist.scss'
 
@@ -13,17 +15,42 @@ interface Task {
 export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  
+  function handleCreateNewTask(title: string) {
+    // // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if(!title.trim()) {
+      console.log( 'Error');
+      return
+    };
 
-  function handleCreateNewTask() {
-    // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    const new_task: Task = {
+      id: Math.random(),
+      title,
+      isComplete: false
+    };
+
+    const all_tasks: Task[] = [...tasks, new_task];
+
+    setTasks(all_tasks);
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const done_task = tasks.map((task) => task.id === id ? {...task, isComplete: !task.isComplete} : task)
+    console.log(tasks)
+    setTasks(done_task) ;
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    const new_tasks = tasks.filter((element) => {
+      return element.id !== id;
+    })
+    console.log(new_tasks)
+    setTasks(new_tasks)
+
+    
+
   }
 
   return (
@@ -38,7 +65,7 @@ export function TaskList() {
             onChange={(e) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
           />
-          <button type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
+          <button type="submit" data-testid="add-task-button" onClick={event => handleCreateNewTask(newTaskTitle)}>
             <FiCheckSquare size={16} color="#fff"/>
           </button>
         </div>
